@@ -1,0 +1,6 @@
+[Core]
+Name = SlackSameroom
+Module = slacksameroom
+
+[Documentation]
+Description = This is the Slack+Sameroom backend for Err.

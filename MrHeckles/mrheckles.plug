@@ -1,0 +1,9 @@
+[Core]
+Name = Mr. Heckles
+Module = mrheckles
+
+[Documentation]
+Description = snarky-screening relay
+
+[Python]
+Version = 2+
