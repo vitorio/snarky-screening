@@ -17,7 +17,7 @@ Errbot backend which adds additional event data to support Sameroom-relayed mess
 
 Slightly modified from the standard Errbot backend for Slack, and so licensed GPLv3.
 
-## test06.py
+## main.py
 Kivy-based video player which accepts text provided over a local socket and displays it at the next-nearest second.
 
 Based on the Kivy examples, and so licensed MIT.
