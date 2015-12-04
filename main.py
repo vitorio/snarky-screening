@@ -1,16 +1,21 @@
 import kivy
-kivy.require('1.2.0')
-
-from sys import argv
-from os.path import dirname, join
 from kivy.app import App
-from kivy.uix.videoplayer import VideoPlayer, VideoPlayerAnnotation
+from kivy.lang import Builder
+from kivy.config import Config
+from kivy.logger import Logger
 
-#check what formats are supported for your targetted devices
-#for example try h264 video and acc audo for android using an mp4
-#container
+Config.set('graphics', 'width', 800)
+Config.set('graphics','height', 400)
 
-# install_twisted_rector must be called before importing  and using the reactor
+from kivy.core.window import Window
+kivy.require('1.9.0')
+# Logger.setLevel('DEBUG')
+
+
+from kivy.garden.desktopvideoplayer import DesktopVideoPlayer
+
+from kivy.garden.scrolllabel import ScrollLabel
+
 from kivy.support import install_twisted_reactor
 install_twisted_reactor()
 
@@ -18,47 +23,6 @@ install_twisted_reactor()
 from twisted.internet import reactor
 from twisted.internet import protocol
 
-from kivy.uix.label import Label
-
-from kivy.core.text import LabelBase
-KIVY_FONTS = [
-    {
-        "name": "LucidaFax",
-        "fn_regular": "/Users/vitorio/Library/Fonts/Monotype  - Lucida Fax.otf",
-        "fn_bold": "/Users/vitorio/Library/Fonts/Monotype  - Lucida Fax Bold.otf",
-        "fn_italic": "/Users/vitorio/Library/Fonts/Monotype  - Lucida Fax Italic.otf",
-        "fn_bolditalic": "/Users/vitorio/Library/Fonts/Monotype  - Lucida Fax Bold Italic.otf"
-    }
-]
-    
-for font in KIVY_FONTS:
-    LabelBase.register(**font)
-
-import math
-
-class VideoPlayerApp(App):
-    video = None
-
-    def build(self):
-        if len(argv) > 1:
-            filename = argv[1]
-        else:
-            curdir = dirname(__file__)
-            filename = join(curdir, 'softboy.mpg')
-            
-        reactor.listenTCP(8000, EchoFactory(self))
-        
-        self.video = VideoPlayer(source=filename)
-        
-        return self.video
-
-    def handle_message(self, msg):
-        displaypos = int(math.ceil(self.video.position))
-        self.video._annotations_labels.append(
-            VideoPlayerAnnotation(annotation={
-                'start': displaypos, 'duration': 5, 'text': msg, 'font_name': 'LucidaFax', 'font_size': 36}))
-
-        return str(displaypos)
 
 class EchoProtocol(protocol.Protocol):
     def dataReceived(self, data):
@@ -74,5 +38,56 @@ class EchoFactory(protocol.Factory):
         self.app = app
 
 
+
+
+kv = """
+DesktopVideoPlayer:
+    source: "/Users/vitorio/Downloads/big_buck_bunny_720p_50mb.mp4"
+
+    AnchorLayout:
+        id: chat_window
+        anchor_y: 'bottom'
+        pos: root.pos
+        size_hint: 1, None
+        height: 200
+        ScrollLabel:
+            id: sl
+            font_size: sp(36)
+            markup: True
+"""
+
+class SimplePlayerApp(App):
+    def build(self):
+        Config.set('input','mouse', 'mouse,disable_multitouch')
+        Window.bind(on_filedrop=self.file_drop)
+        self.title = 'DesktopVideoPlayer'
+        self.root = Builder.load_string(kv)
+        
+        self.root.remove_widget(self.root.ids.bottom_layout)
+        self.root.add_widget(self.root.ids.bottom_layout)
+        
+        self.root.ids.sl.text += """
+Welcome to a Snarky Screening!
+
+You need to kick off auto-scroll by scrolling this text up so you can see the whole thing.  You'll also need to re-do it if you resize the window."""
+        
+        reactor.listenTCP(8000, EchoFactory(self))
+#        return Builder.load_string(kv)
+
+    def file_drop(self, filename, *args):
+        print(filename)
+
+    def handle_message(self, msg):
+        msg = msg.strip(chr(13) + chr(10)) # remove CRLF
+        self.root.ids.sl.text += "\n[color=#bfd0ff]received: %s[/color]" % msg
+
+        if msg == "ping":
+            msg = "pong"
+        if msg == "plop":
+            msg = "kivy rocks"
+        self.root.ids.sl.text += "\n[color=#e9ae9e]responded: %s[/color]" % msg
+
+#        return msg
+
 if __name__ == '__main__':
-    VideoPlayerApp().run()
+    SimplePlayerApp().run()
