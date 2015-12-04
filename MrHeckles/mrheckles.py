@@ -3,12 +3,39 @@
 from errbot import BotPlugin, botcmd
 #from errbot.builtins.webserver import webhook
 
-import socket
+import socket, re, unidecode, sys
 
 hecklechat = 'heckleproxy'
 host = 'localhost'
 port = 8000
 size = 1024
+hecklesocket = None
+
+def socket_reconnect(fromname, msgbody):
+    global hecklesocket
+    try:
+        hecklesocket.close()
+    except:
+        pass
+    hecklesocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    try:
+        hecklesocket.connect((host,port))
+    except:
+        pass
+    else:
+        try:
+            hecklesocket.send('{}{}'.format(fromname, msgbody))
+        except:
+            pass
+        else:
+            try:
+                data = hecklesocket.recv(size)
+            except:
+                pass
+            else:
+                print '{{"start": {}, "text": "{}{}"}}'.format(data, fromname, msgbody)
+
+socket_reconnect('<Mr. Heckles> ', 'Ready!')
 
 class MrHeckles(BotPlugin):
     """An Err plugin skeleton"""
@@ -55,21 +82,27 @@ class MrHeckles(BotPlugin):
         if message.type == 'groupchat':
             if message.frm.channelname == hecklechat:
                 fromname = ''
-                if message.frm.fullname != '<None>':
+                msgbody = unidecode.unidecode(message.body)
+                fakename = re.split(r'^&lt;(.*)&gt;(.*)', msgbody)
+                if len(fakename) == 4:
+                    fromname = '<{}> '.format(fakename[1])
+                    msgbody = fakename[2].strip()
+                elif message.frm.fullname != '<None>':
                     fromname = '<{}> '.format(message.frm.fullname)
                 elif 'sameroom_bot' in message.extras:
                     fromname = '<{}> '.format(message.extras['sameroom_username'])
                 
-                s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 try:
-                    s.connect((host,port))
+                    hecklesocket.send('{}{}'.format(fromname, msgbody))
                 except:
-                    pass
+                    socket_reconnect(fromname, msgbody)
                 else:
-                    s.send('{}{}'.format(fromname, message.body))
-                    data = s.recv(size)
-                    s.close()
-                    print 'Received:', data
+                    try:
+                        data = hecklesocket.recv(size)
+                    except:
+                        pass
+                    else:
+                        print '{{"start": {}, "text": "{}{}"}}'.format(data, fromname, msgbody)
 
 #   def callback_botmessage(self, message):
 #       """Triggered for every message that comes from the bot itself
