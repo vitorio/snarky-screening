@@ -57,6 +57,7 @@ import re
 
 from kivy.uix.popup import Popup
 from kivy.uix.filechooser import FileChooserIconView
+from kivy.animation import Animation
 
 kv = """
 DesktopVideoPlayer:
@@ -70,17 +71,19 @@ DesktopVideoPlayer:
         on_release: print('hi')
     
     AnchorLayout:
+        id: snarky_chatwindow
         anchor_y: 'bottom'
         pos: root.pos
         size_hint: 1, None
-        height: 200
+        height: dp(200)
+        opacity: 1.0
         ScrollLabel:
             id: snarky_chatstream
             font_size: sp(36)
             markup: True
             font_name: 'LucidaFax'
             outline: True
-            outline_size: 4
+            outline_size: dp(4)
 """
 
 class SimplePlayerApp(App):
@@ -122,6 +125,11 @@ Welcome to a [b]Snarky Screening[/b]!
         msg = re.sub(r"_(.*)_",   r"[i]\1[/i]", msg)
         
         self.root.ids.snarky_chatstream.text += "\n{}".format(msg)
+        
+        Animation.cancel_all(self.root.ids.snarky_chatwindow)
+        self.root.ids.snarky_chatwindow.opacity = 1.0
+        anim = Animation(duration=7.0) + Animation(opacity=0.0, duration=3.0)
+        anim.start(self.root.ids.snarky_chatwindow)
         
         return str(self.root.ids.video.position)
 
