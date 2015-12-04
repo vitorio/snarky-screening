@@ -71,6 +71,8 @@ DesktopVideoPlayer:
             font_size: sp(36)
             markup: True
             font_name: 'LucidaFax'
+            outline: True
+            outline_size: 4
 """
 
 class SimplePlayerApp(App):
