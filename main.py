@@ -55,19 +55,27 @@ class EchoFactory(protocol.Factory):
 
 import re
 
+from kivy.uix.popup import Popup
+from kivy.uix.filechooser import FileChooserIconView
 
 kv = """
 DesktopVideoPlayer:
-    id: video
 
+    ContextMenuDivider:
+        id: snarky_divider
+
+    ContextMenuTextItem:
+        id: snarky_opendialog
+        text: "Open file"
+        on_release: print('hi')
+    
     AnchorLayout:
-        id: chat_window
         anchor_y: 'bottom'
         pos: root.pos
         size_hint: 1, None
         height: 200
         ScrollLabel:
-            id: sl
+            id: snarky_chatstream
             font_size: sp(36)
             markup: True
             font_name: 'LucidaFax'
@@ -82,10 +90,22 @@ class SimplePlayerApp(App):
         self.title = 'DesktopVideoPlayer'
         self.root = Builder.load_string(kv)
         
+        # self.root.ids.snarky_filechooser.on_submit = self.handle_selection
+        
         self.root.remove_widget(self.root.ids.bottom_layout)
         self.root.add_widget(self.root.ids.bottom_layout)
         
-        self.root.ids.sl.text += """
+        fc = FileChooserIconView()
+        fc.on_submit = self.handle_selection
+        self.popup = Popup(title='Open file', content=fc)
+        self.root.ids.snarky_opendialog.on_release = self.popup.open
+        
+        self.root.remove_widget(self.root.ids.snarky_divider)
+        self.root.remove_widget(self.root.ids.snarky_opendialog)
+        self.root.ids._context_menu.add_widget(self.root.ids.snarky_divider)
+        self.root.ids._context_menu.add_widget(self.root.ids.snarky_opendialog)
+
+        self.root.ids.snarky_chatstream.text += """
 Welcome to a [b]Snarky Screening[/b]!
 
 [i]You[/i] need to kick off [i]auto-scroll[/i] by scrolling this text up so you can see the whole thing.  You'll also need to re-do it if you [i]resize[/i] the window."""
@@ -101,9 +121,15 @@ Welcome to a [b]Snarky Screening[/b]!
         msg = re.sub(r"\*(.*)\*", r"[b]\1[/b]", msg)
         msg = re.sub(r"_(.*)_",   r"[i]\1[/i]", msg)
         
-        self.root.ids.sl.text += "\n{}".format(msg)
+        self.root.ids.snarky_chatstream.text += "\n{}".format(msg)
         
         return str(self.root.ids.video.position)
+
+    def handle_selection(self, selection, touch):
+        self.popup.dismiss()
+        self.root.ids._context_menu.visible = False
+        self.root.ids.video.source = selection[0]
+        
 
 if __name__ == '__main__':
     SimplePlayerApp().run()
