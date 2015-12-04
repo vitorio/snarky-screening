@@ -20,6 +20,20 @@ from twisted.internet import protocol
 
 from kivy.uix.label import Label
 
+from kivy.core.text import LabelBase
+KIVY_FONTS = [
+    {
+        "name": "LucidaFax",
+        "fn_regular": "/Users/vitorio/Library/Fonts/Monotype  - Lucida Fax.otf",
+        "fn_bold": "/Users/vitorio/Library/Fonts/Monotype  - Lucida Fax Bold.otf",
+        "fn_italic": "/Users/vitorio/Library/Fonts/Monotype  - Lucida Fax Italic.otf",
+        "fn_bolditalic": "/Users/vitorio/Library/Fonts/Monotype  - Lucida Fax Bold Italic.otf"
+    }
+]
+    
+for font in KIVY_FONTS:
+    LabelBase.register(**font)
+
 import math
 
 class VideoPlayerApp(App):
@@ -42,7 +56,7 @@ class VideoPlayerApp(App):
         displaypos = int(math.ceil(self.video.position))
         self.video._annotations_labels.append(
             VideoPlayerAnnotation(annotation={
-                'start': displaypos, 'duration': 5, 'text': msg}))
+                'start': displaypos, 'duration': 5, 'text': msg, 'font_name': 'LucidaFax', 'font_size': 36}))
 
         return str(displaypos)
 
