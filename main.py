@@ -11,10 +11,26 @@ from kivy.core.window import Window
 kivy.require('1.9.0')
 # Logger.setLevel('DEBUG')
 
+from kivy.core.text import LabelBase
+KIVY_FONTS = [
+    {
+        "name": "LucidaFax",
+        "fn_regular": "/Users/vitorio/Library/Fonts/Monotype  - Lucida Fax.otf",
+        "fn_bold": "/Users/vitorio/Library/Fonts/Monotype  - Lucida Fax Bold.otf",
+        "fn_italic": "/Users/vitorio/Library/Fonts/Monotype  - Lucida Fax Italic.otf",
+        "fn_bolditalic": "/Users/vitorio/Library/Fonts/Monotype  - Lucida Fax Bold Italic.otf"
+    }
+]
+    
+for font in KIVY_FONTS:
+    LabelBase.register(**font)
 
 from kivy.garden.desktopvideoplayer import DesktopVideoPlayer
 
 from kivy.garden.scrolllabel import ScrollLabel
+
+
+from sys import argv
 
 from kivy.support import install_twisted_reactor
 install_twisted_reactor()
@@ -42,7 +58,7 @@ class EchoFactory(protocol.Factory):
 
 kv = """
 DesktopVideoPlayer:
-    source: "/Users/vitorio/Downloads/big_buck_bunny_720p_50mb.mp4"
+    id: video
 
     AnchorLayout:
         id: chat_window
@@ -54,12 +70,13 @@ DesktopVideoPlayer:
             id: sl
             font_size: sp(36)
             markup: True
+            font_name: 'LucidaFax'
 """
 
 class SimplePlayerApp(App):
     def build(self):
         Config.set('input','mouse', 'mouse,disable_multitouch')
-        Window.bind(on_filedrop=self.file_drop)
+
         self.title = 'DesktopVideoPlayer'
         self.root = Builder.load_string(kv)
         
@@ -71,23 +88,16 @@ Welcome to a Snarky Screening!
 
 You need to kick off auto-scroll by scrolling this text up so you can see the whole thing.  You'll also need to re-do it if you resize the window."""
         
+        if len(argv) > 1:
+            self.root.ids.video.source = argv[1]
+        
         reactor.listenTCP(8000, EchoFactory(self))
-#        return Builder.load_string(kv)
-
-    def file_drop(self, filename, *args):
-        print(filename)
 
     def handle_message(self, msg):
         msg = msg.strip(chr(13) + chr(10)) # remove CRLF
-        self.root.ids.sl.text += "\n[color=#bfd0ff]received: %s[/color]" % msg
-
-        if msg == "ping":
-            msg = "pong"
-        if msg == "plop":
-            msg = "kivy rocks"
-        self.root.ids.sl.text += "\n[color=#e9ae9e]responded: %s[/color]" % msg
-
-#        return msg
+        self.root.ids.sl.text += "\n{}".format(msg)
+        
+        return str(self.root.ids.video.position)
 
 if __name__ == '__main__':
     SimplePlayerApp().run()
