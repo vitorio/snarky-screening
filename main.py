@@ -3,42 +3,42 @@ from kivy.app import App
 from kivy.lang import Builder
 from kivy.config import Config
 from kivy.logger import Logger
+from kivy.core.window import Window
+from kivy.core.text import LabelBase
+from kivy.garden.desktopvideoplayer import DesktopVideoPlayer
+from kivy.garden.scrolllabel import ScrollLabel
+from kivy.support import install_twisted_reactor
+from kivy.uix.popup import Popup
+from kivy.uix.filechooser import FileChooserIconView
+from kivy.animation import Animation
+
+from sys import argv
+import os.path
+
+install_twisted_reactor()
+from twisted.internet import reactor
+from twisted.internet import protocol
 
 Config.set('graphics', 'width', 800)
 Config.set('graphics','height', 400)
 
-from kivy.core.window import Window
 kivy.require('1.9.0')
 # Logger.setLevel('DEBUG')
 
-from kivy.core.text import LabelBase
-KIVY_FONTS = [
-    {
-        "name": "LucidaFax",
-        "fn_regular": "/Users/vitorio/Library/Fonts/Monotype  - Lucida Fax.otf",
-        "fn_bold": "/Users/vitorio/Library/Fonts/Monotype  - Lucida Fax Bold.otf",
-        "fn_italic": "/Users/vitorio/Library/Fonts/Monotype  - Lucida Fax Italic.otf",
-        "fn_bolditalic": "/Users/vitorio/Library/Fonts/Monotype  - Lucida Fax Bold Italic.otf"
-    }
-]
-    
-for font in KIVY_FONTS:
-    LabelBase.register(**font)
-
-from kivy.garden.desktopvideoplayer import DesktopVideoPlayer
-
-from kivy.garden.scrolllabel import ScrollLabel
-
-
-from sys import argv
-
-from kivy.support import install_twisted_reactor
-install_twisted_reactor()
-
-
-from twisted.internet import reactor
-from twisted.internet import protocol
-
+UseLucidaFax = False
+if os.path.exists(os.path.join(os.path.expanduser('~'), 'Library/Fonts/Monotype  - Lucida Fax.otf')):
+    KIVY_FONTS = [
+        {
+            "name": "LucidaFax",
+            "fn_regular": os.path.join(os.path.expanduser('~'), 'Library/Fonts/Monotype  - Lucida Fax.otf'),
+            "fn_bold": os.path.join(os.path.expanduser('~'), 'Library/Fonts/Monotype  - Lucida Fax Bold.otf'),
+            "fn_italic": os.path.join(os.path.expanduser('~'), 'Library/Fonts/Monotype  - Lucida Fax Italic.otf'),
+            "fn_bolditalic": os.path.join(os.path.expanduser('~'), 'Library/Fonts/Monotype  - Lucida Fax Bold Italic.otf')
+        }
+    ]
+    for font in KIVY_FONTS:
+        LabelBase.register(**font)
+    UseLucidaFax = True
 
 class EchoProtocol(protocol.Protocol):
     def dataReceived(self, data):
@@ -46,18 +46,11 @@ class EchoProtocol(protocol.Protocol):
         if response:
             self.transport.write(response)
 
-
 class EchoFactory(protocol.Factory):
     protocol = EchoProtocol
 
     def __init__(self, app):
         self.app = app
-
-import re
-
-from kivy.uix.popup import Popup
-from kivy.uix.filechooser import FileChooserIconView
-from kivy.animation import Animation
 
 kv = """
 DesktopVideoPlayer:
@@ -81,19 +74,16 @@ DesktopVideoPlayer:
             id: snarky_chatstream
             font_size: sp(36)
             markup: True
-            font_name: 'LucidaFax'
             outline: True
             outline_size: dp(4)
 """
 
-class SimplePlayerApp(App):
+class SnarkyScreeningApp(App):
     def build(self):
         Config.set('input','mouse', 'mouse,disable_multitouch')
 
-        self.title = 'DesktopVideoPlayer'
+        self.title = 'Snarky Screening'
         self.root = Builder.load_string(kv)
-        
-        # self.root.ids.snarky_filechooser.on_submit = self.handle_selection
         
         self.root.remove_widget(self.root.ids.bottom_layout)
         self.root.add_widget(self.root.ids.bottom_layout)
@@ -108,6 +98,9 @@ class SimplePlayerApp(App):
         self.root.ids._context_menu.add_widget(self.root.ids.snarky_divider)
         self.root.ids._context_menu.add_widget(self.root.ids.snarky_opendialog)
 
+        if UseLucidaFax:
+            self.root.ids.snarky_chatstream.font_name = 'LucidaFax'
+            
         self.root.ids.snarky_chatstream.text += """
 Welcome to a [b]Snarky Screening[/b]!
 
@@ -138,6 +131,5 @@ Welcome to a [b]Snarky Screening[/b]!
         self.root.ids._context_menu.visible = False
         self.root.ids.video.source = selection[0]
         
-
 if __name__ == '__main__':
-    SimplePlayerApp().run()
+    SnarkyScreeningApp().run()
