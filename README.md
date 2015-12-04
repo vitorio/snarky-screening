@@ -18,7 +18,7 @@ Errbot backend which adds additional event data to support Sameroom-relayed mess
 Slightly modified from the standard Errbot backend for Slack, and so licensed GPLv3.
 
 ## main.py
-Kivy-based video player which accepts text provided over a local socket and displays it at the next-nearest second.
+Kivy-based video player which accepts text provided over a local socket and displays it on an ongoing basis, fading out after ten seconds.
 
 This uses [Twisted](http://kivy.org/docs/guide/other-frameworks.html), [ScrollLabel](https://github.com/kivy-garden/garden.scrolllabel) and [DesktopVideoPlayer](https://github.com/kivy-garden/garden.desktopvideoplayer) from the garden.  ScrollView depends on [RecycleView](https://github.com/kivy-garden/garden.recycleview).  At this time, you'll also need a patched Kivy `_text_sdl2` and a patched ScrollLabel if you want nice outlines like these:
 
