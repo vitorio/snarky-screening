@@ -53,7 +53,7 @@ class EchoFactory(protocol.Factory):
     def __init__(self, app):
         self.app = app
 
-
+import re
 
 
 kv = """
@@ -84,9 +84,9 @@ class SimplePlayerApp(App):
         self.root.add_widget(self.root.ids.bottom_layout)
         
         self.root.ids.sl.text += """
-Welcome to a Snarky Screening!
+Welcome to a [b]Snarky Screening[/b]!
 
-You need to kick off auto-scroll by scrolling this text up so you can see the whole thing.  You'll also need to re-do it if you resize the window."""
+[i]You[/i] need to kick off [i]auto-scroll[/i] by scrolling this text up so you can see the whole thing.  You'll also need to re-do it if you [i]resize[/i] the window."""
         
         if len(argv) > 1:
             self.root.ids.video.source = argv[1]
@@ -95,6 +95,10 @@ You need to kick off auto-scroll by scrolling this text up so you can see the wh
 
     def handle_message(self, msg):
         msg = msg.strip(chr(13) + chr(10)) # remove CRLF
+        
+        msg = re.sub(r"\*(.*)\*", r"[b]\1[/b]", msg)
+        msg = re.sub(r"_(.*)_",   r"[i]\1[/i]", msg)
+        
         self.root.ids.sl.text += "\n{}".format(msg)
         
         return str(self.root.ids.video.position)
