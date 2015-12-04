@@ -20,4 +20,17 @@ Slightly modified from the standard Errbot backend for Slack, and so licensed GP
 ## main.py
 Kivy-based video player which accepts text provided over a local socket and displays it at the next-nearest second.
 
+This uses [Twisted](http://kivy.org/docs/guide/other-frameworks.html), [ScrollLabel](https://github.com/kivy-garden/garden.scrolllabel) and [DesktopVideoPlayer](https://github.com/kivy-garden/garden.desktopvideoplayer) from the garden.  ScrollView depends on [RecycleView](https://github.com/kivy-garden/garden.recycleview).  At this time, you'll also need a patched Kivy `_text_sdl2` and a patched ScrollLabel if you want nice outlines like these:
+
+![Nice outlines only supported by SDL2](http://i.imgur.com/JAoqAYr.png)
+
+Based on the Kivy examples, and so licensed MIT.
+
+## snarkyscreenshots.py
+`MrHeckles` logs chat statements in a Kivy [VideoPlayerAnnotation](http://kivy.org/docs/api-kivy.uix.videoplayer.html)-style format.
+
+You can compile these into a proper JSON file, and pass it along with the original movie you screened, and this will generate screenshots of the film with each statement overlaid onto them.
+
+Same dependencies as `main.py`.
+
 Based on the Kivy examples, and so licensed MIT.
