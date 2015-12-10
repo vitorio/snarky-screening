@@ -6,7 +6,7 @@ Built on [Errbot](http://errbot.io) and [Kivy](http://kivy.org), plus [Sameroom]
 Written in 2015 by [Vitorio Miliano](http://vitor.io/).
 
 ## MrHeckles
-Errbot bot that relays anything said in a chat room to a local socket.
+Errbot bot that relays anything said in a chat room to a local socket.  Depends on unidecode, available through PyPI.  Errbot depends on 3to2, slackclient, and recent versions of six, pygments, jinja2, requests, and pyopenssl, all available through PyPi.
 
 To the extent possible under law, the author has dedicated all copyright and related and neighboring rights to this software to the public domain worldwide.  This software is distributed without any warranty.
 

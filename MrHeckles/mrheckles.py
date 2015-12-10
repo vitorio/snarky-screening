@@ -40,7 +40,7 @@ socket_reconnect('<Mr. Heckles> ', 'Ready!')
 class MrHeckles(BotPlugin):
     """An Err plugin skeleton"""
     min_err_version = '1.6.0' # Optional, but recommended
-    max_err_version = '3.2.1' # Optional, but recommended
+    max_err_version = '3.2.2' # Optional, but recommended
 
 #   def activate(self):
 #       """Triggers on plugin activation
