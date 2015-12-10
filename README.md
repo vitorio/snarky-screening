@@ -6,7 +6,7 @@ Built on [Errbot](http://errbot.io) and [Kivy](http://kivy.org), plus [Sameroom]
 Written in 2015 by [Vitorio Miliano](http://vitor.io/).
 
 ## MrHeckles
-Errbot bot that relays anything said in a chat room to a local socket.  Depends on unidecode, available through PyPI.  Errbot depends on 3to2, slackclient, and recent versions of six, pygments, jinja2, requests, and pyopenssl, all available through PyPi.
+Errbot bot that relays anything said in a chat room to a local socket.  Depends on unidecode, available through PyPI.  Errbot depends on 3to2, slackclient, and recent versions of six, pygments, jinja2, requests, and pyopenssl, all available through PyPI.
 
 To the extent possible under law, the author has dedicated all copyright and related and neighboring rights to this software to the public domain worldwide.  This software is distributed without any warranty.
 
@@ -20,7 +20,7 @@ Slightly modified from the standard Errbot backend for Slack, and so licensed GP
 ## main.py
 Kivy-based video player which accepts text provided over a local socket and displays it on an ongoing basis, fading out after ten seconds.
 
-This uses [Twisted](http://kivy.org/docs/guide/other-frameworks.html), [ScrollLabel](https://github.com/kivy-garden/garden.scrolllabel) and [DesktopVideoPlayer](https://github.com/kivy-garden/garden.desktopvideoplayer) from the garden.  ScrollView depends on [RecycleView](https://github.com/kivy-garden/garden.recycleview).  At this time, you'll also need a patched Kivy `_text_sdl2` and a patched ScrollLabel if you want nice outlines like these:
+This uses [Twisted](http://kivy.org/docs/guide/other-frameworks.html), [ScrollLabel](https://github.com/kivy-garden/garden.scrolllabel) and [DesktopVideoPlayer](https://github.com/kivy-garden/garden.desktopvideoplayer) from the garden.  ScrollView depends on [RecycleView](https://github.com/kivy-garden/garden.recycleview).  At this time, you'll also need a patched Kivy `_text_sdl2` and a patched ScrollLabel if you want nice outlines like these (or wait until Kivy 1.9.2+):
 
 ![Nice outlines only supported by SDL2](http://i.imgur.com/JAoqAYr.png)
 
